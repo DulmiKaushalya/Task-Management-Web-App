@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const express = require('express');
 const mongoose = require('mongoose');
-const session = require('cookie-session');
+const session = require('express-session');
 const passport = require('passport');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
@@ -22,10 +22,15 @@ app.use(cors({
 app.use(express.json());
 
 app.use(session({
-  name: 'session',
-  keys: [process.env.SESSION_SECRET],
-  maxAge: 24 * 60 * 60 * 1000
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // Set to true if using HTTPS
+    maxAge: 24 * 60 * 60 * 1000
+  }
 }));
+
 
 app.use(passport.initialize());
 app.use(passport.session());
