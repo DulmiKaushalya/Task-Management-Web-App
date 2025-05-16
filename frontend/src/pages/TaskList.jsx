@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
 import { useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrash, FaEye, FaDownload, FaArrowLeft } from 'react-icons/fa';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
+
 
 const TaskList = () => {
   const [user, setUser] = useState(null);
@@ -33,14 +36,35 @@ const TaskList = () => {
       .catch(err => console.error("Error fetching tasks:", err));
   };
 
-  const downloadPDF = () => {
-    const doc = new jsPDF();
-    doc.text("Task Report", 10, 10);
-    tasks.forEach((task, i) => {
-      doc.text(`${i + 1}. ${task.title} - ${task.status}`, 10, 20 + i * 10);
-    });
-    doc.save("task_report.pdf");
-  };
+const downloadPDF = () => {
+  const doc = new jsPDF();
+
+  doc.setFontSize(18);
+  doc.text("Task Report", 14, 20);
+
+  doc.setFontSize(11);
+  doc.setTextColor(100);
+  doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 28);
+
+  // ✅ Correct usage now
+  autoTable(doc, {
+  head: [["#", "Title", "Status", "Deadline"]],
+  body: tasks.map((task, index) => [
+    index + 1,
+    task.title,
+    task.status,
+    new Date(task.deadline).toLocaleDateString()
+  ]),
+  startY: 35,
+  styles: { fontSize: 10 },
+  headStyles: { fillColor: [52, 152, 219] },
+});
+
+
+  doc.save("task_report.pdf");
+};
+
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -79,6 +103,14 @@ const TaskList = () => {
               <h1 className="text-3xl font-bold text-gray-800">Task List</h1>
               <p className="text-gray-600">Manage and organize your tasks</p>
             </div>
+
+             <button
+              onClick={() => navigate('/add-task')}
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded shadow"
+            >
+              <FaArrowLeft /> ADD NEW TASK
+            </button>
+            
             <button
               onClick={downloadPDF}
               className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"

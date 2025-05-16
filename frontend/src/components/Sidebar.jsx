@@ -26,12 +26,6 @@ const Sidebar = () => {
       path: '/tasks',
     },
     { 
-      title: 'Calendar', 
-      icon: <Calendar size={20} />, 
-      path: '/calendar',
-      badge: null
-    },
-    { 
       title: 'Reports', 
       icon: <BarChart2 size={20} />, 
       path: '/reports',
@@ -43,12 +37,11 @@ const Sidebar = () => {
     { 
       title: 'Settings', 
       icon: <Settings size={20} />, 
-      path: '/settings'
+     
     },
     { 
       title: 'Help', 
       icon: <HelpCircle size={20} />, 
-      path: '/help'
     }
   ];
   

@@ -6,6 +6,7 @@ import AddTask from './pages/AddTask';
 import EditTask from './pages/EditTask';
 import ViewTask from './pages/ViewTask';
 import Reports from './pages/Reports';
+import Profile from './pages/Profile';;
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/edit-task/:id" element={<EditTask />} />
         <Route path="/view-task/:id" element={<ViewTask />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/profile" element={<Profile/>} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>
