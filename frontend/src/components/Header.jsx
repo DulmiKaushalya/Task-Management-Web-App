@@ -4,7 +4,6 @@ import { Menu, Bell, Search, User, LogOut } from 'lucide-react';
 
 const Header = ({ user, toggleSidebar }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -20,7 +19,7 @@ const Header = ({ user, toggleSidebar }) => {
             <Menu size={24} />
           </button>
           <div className="flex items-center space-x-2">
-            <span className="text-blue-600 font-bold text-2xl">TaskMaster</span>
+            <span className="text-blue-600 font-bold text-2xl">TickTick</span> 
           </div>
         </div>
 
@@ -36,44 +35,8 @@ const Header = ({ user, toggleSidebar }) => {
           />
         </div>
 
-        {/* Right side - Notifications and user profile */}
+        {/* Right side -user profile */}
         <div className="flex items-center space-x-4">
-          {/* Notifications dropdown */}
-          <div className="relative">
-            <button 
-              onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-              className="text-gray-500 hover:text-gray-700 focus:outline-none relative"
-            >
-              <Bell size={24} />
-              
-            </button>
-
-            {isNotificationsOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-10">
-                <h3 className="px-4 py-2 font-semibold text-gray-700 border-b">Notifications</h3>
-                <div className="max-h-64 overflow-y-auto">
-                  <div className="px-4 py-3 hover:bg-gray-50 border-b">
-                    <p className="font-medium text-gray-800">Task deadline approaching</p>
-                    <p className="text-sm text-gray-600">Project proposal due in 2 days</p>
-                  </div>
-                  <div className="px-4 py-3 hover:bg-gray-50 border-b">
-                    <p className="font-medium text-gray-800">New task assigned</p>
-                    <p className="text-sm text-gray-600">Team review for Q2 planning</p>
-                  </div>
-                  <div className="px-4 py-3 hover:bg-gray-50">
-                    <p className="font-medium text-gray-800">Task completed</p>
-                    <p className="text-sm text-gray-600">Weekly report has been submitted</p>
-                  </div>
-                </div>
-                <div className="px-4 py-2 border-t">
-                  <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    View all notifications
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
           {/* User profile dropdown */}
           <div className="relative">
             <button 
@@ -95,12 +58,6 @@ const Header = ({ user, toggleSidebar }) => {
                   className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                 >
                   Profile Settings
-                </button>
-                <button 
-                  onClick={() => navigate('/preferences')}
-                  className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-                >
-                  Preferences
                 </button>
                 <hr className="my-1" />
                 <button 
