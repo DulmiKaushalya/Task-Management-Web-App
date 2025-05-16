@@ -5,6 +5,8 @@ import TaskList from './pages/TaskList';
 import AddTask from './pages/AddTask';
 import EditTask from './pages/EditTask';
 import ViewTask from './pages/ViewTask';
+import Reports from './pages/Reports';
+
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/add-task" element={<AddTask />} />
         <Route path="/edit-task/:id" element={<EditTask />} />
         <Route path="/view-task/:id" element={<ViewTask />} />
+        <Route path="/reports" element={<Reports />} />
+        {/* Add more routes as needed */}
       </Routes>
     </Router>
   );
