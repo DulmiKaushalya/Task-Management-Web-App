@@ -22,19 +22,6 @@ const Header = ({ user, toggleSidebar }) => {
             <span className="text-blue-600 font-bold text-2xl">TickTick</span> 
           </div>
         </div>
-
-        {/* Center - Search bar */}
-        <div className="hidden md:flex items-center max-w-md w-full relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search size={18} className="text-gray-400" />
-          </div>
-          <input
-            type="text"
-            placeholder="Search for tasks..."
-            className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-
         {/* Right side -user profile */}
         <div className="flex items-center space-x-4">
           {/* User profile dropdown */}
