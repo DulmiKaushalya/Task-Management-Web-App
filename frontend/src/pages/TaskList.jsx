@@ -4,15 +4,19 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 import { useNavigate } from 'react-router-dom';
-import { FaEdit, FaTrash, FaEye, FaDownload, FaArrowLeft } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaEye, FaDownload, FaArrowLeft, FaSearch, FaSort } from 'react-icons/fa';
 import Header from '../components/Header';
 import Sidebar from '../components/Sidebar';
-
 
 const TaskList = () => {
   const [user, setUser] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [sortConfig, setSortConfig] = useState({ key: 'deadline', direction: 'asc' });
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,41 +34,80 @@ const TaskList = () => {
     fetchTasks();
   }, [navigate]);
 
+  useEffect(() => {
+    // Apply filters and sorting whenever tasks, searchQuery, or statusFilter changes
+    let result = [...tasks];
+    
+    // Apply search filter
+    if (searchQuery) {
+      result = result.filter(task => 
+        task.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        (task.description && task.description.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+    }
+    
+    // Apply status filter
+    if (statusFilter !== 'All') {
+      result = result.filter(task => task.status === statusFilter);
+    }
+    
+    // Apply sorting
+    if (sortConfig.key) {
+      result.sort((a, b) => {
+        if (sortConfig.key === 'deadline') {
+          return sortConfig.direction === 'asc' 
+            ? new Date(a.deadline) - new Date(b.deadline)
+            : new Date(b.deadline) - new Date(a.deadline);
+        } else {
+          // For title sorting
+          if (a[sortConfig.key] < b[sortConfig.key]) {
+            return sortConfig.direction === 'asc' ? -1 : 1;
+          }
+          if (a[sortConfig.key] > b[sortConfig.key]) {
+            return sortConfig.direction === 'asc' ? 1 : -1;
+          }
+          return 0;
+        }
+      });
+    }
+    
+    setFilteredTasks(result);
+  }, [tasks, searchQuery, statusFilter, sortConfig]);
+
   const fetchTasks = () => {
     axios.get("http://localhost:5000/tasks", { withCredentials: true })
-      .then(res => setTasks(res.data))
+      .then(res => {
+        setTasks(res.data);
+        setFilteredTasks(res.data);
+      })
       .catch(err => console.error("Error fetching tasks:", err));
   };
 
-const downloadPDF = () => {
-  const doc = new jsPDF();
+  const downloadPDF = () => {
+    const doc = new jsPDF();
 
-  doc.setFontSize(18);
-  doc.text("Task Report", 14, 20);
+    doc.setFontSize(18);
+    doc.text("Task Report", 14, 20);
 
-  doc.setFontSize(11);
-  doc.setTextColor(100);
-  doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 28);
+    doc.setFontSize(11);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 28);
 
-  // ✅ Correct usage now
-  autoTable(doc, {
-  head: [["#", "Title", "Status", "Deadline"]],
-  body: tasks.map((task, index) => [
-    index + 1,
-    task.title,
-    task.status,
-    new Date(task.deadline).toLocaleDateString()
-  ]),
-  startY: 35,
-  styles: { fontSize: 10 },
-  headStyles: { fillColor: [52, 152, 219] },
-});
+    autoTable(doc, {
+      head: [["#", "Title", "Status", "Deadline"]],
+      body: filteredTasks.map((task, index) => [
+        index + 1,
+        task.title,
+        task.status,
+        new Date(task.deadline).toLocaleDateString()
+      ]),
+      startY: 35,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [52, 152, 219] },
+    });
 
-
-  doc.save("task_report.pdf");
-};
-
-
+    doc.save("task_report.pdf");
+  };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -90,6 +133,21 @@ const downloadPDF = () => {
     }
   };
 
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIndicator = (key) => {
+    if (sortConfig.key === key) {
+      return sortConfig.direction === 'asc' ? ' ↑' : ' ↓';
+    }
+    return '';
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
       <Header user={user} toggleSidebar={toggleSidebar} />
@@ -104,39 +162,96 @@ const downloadPDF = () => {
               <p className="text-gray-600">Manage and organize your tasks</p>
             </div>
 
-             <button
-              onClick={() => navigate('/add-task')}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded shadow"
-            >
-              <FaArrowLeft /> ADD NEW TASK
-            </button>
-            
-            <button
-              onClick={downloadPDF}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
-            >
-              <FaDownload /> Download PDF
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => navigate('/add-task')}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded shadow"
+              >
+                <FaArrowLeft /> ADD NEW TASK
+              </button>
+              
+              <button
+                onClick={downloadPDF}
+                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+              >
+                <FaDownload /> Download PDF
+              </button>
+            </div>
+          </div>
+
+          {/* Search and Filter Section */}
+          <div className="mb-6 bg-white p-4 rounded-lg shadow">
+            <div className="flex flex-wrap gap-4">
+              {/* Search Bar */}
+              <div className="flex-1 min-w-[250px]">
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <FaSearch className="text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Search tasks..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              {/* Status Filter */}
+              <div className="min-w-[200px]">
+                <select
+                  className="block w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="All">All Statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Done">Done</option>
+                </select>
+              </div>
+            </div>
           </div>
 
           <div className="overflow-x-auto bg-white rounded-lg shadow">
             <table className="min-w-full">
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="p-3 text-left">Title</th>
+                  <th 
+                    className="p-3 text-left cursor-pointer" 
+                    onClick={() => handleSort('title')}
+                  >
+                    <div className="flex items-center">
+                      Title
+                      <FaSort className="ml-1 text-gray-400" />
+                      <span className="text-xs ml-1">{getSortIndicator('title')}</span>
+                    </div>
+                  </th>
                   <th className="p-3 text-left">Description</th>
                   <th className="p-3 text-left">Status</th>
-                  <th className="p-3 text-left">Deadline</th>
+                  <th 
+                    className="p-3 text-left cursor-pointer"
+                    onClick={() => handleSort('deadline')}
+                  >
+                    <div className="flex items-center">
+                      Deadline
+                      <FaSort className="ml-1 text-gray-400" />
+                      <span className="text-xs ml-1">{getSortIndicator('deadline')}</span>
+                    </div>
+                  </th>
                   <th className="p-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {tasks.length === 0 ? (
+                {filteredTasks.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="text-center p-6 text-gray-500">No tasks available</td>
+                    <td colSpan="5" className="text-center p-6 text-gray-500">
+                      {tasks.length === 0 ? "No tasks available" : "No tasks match your filters"}
+                    </td>
                   </tr>
                 ) : (
-                  tasks.map((task, index) => (
+                  filteredTasks.map((task, index) => (
                     <tr key={task._id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                       <td className="p-3">{task.title}</td>
                       <td className="p-3 truncate max-w-xs" title={task.description}>

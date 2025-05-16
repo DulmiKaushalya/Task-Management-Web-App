@@ -153,7 +153,6 @@ const Dashboard = () => {
                       />
                       <div className="flex-1">
                         <h4 className="font-medium text-gray-800">{task.title}</h4>
-                        <p className="text-sm text-gray-600">Due: {new Date(task.dueDate).toLocaleDateString()}</p>
                       </div>
                       <span 
                         className={`text-xs px-2 py-1 rounded font-medium
