@@ -5,27 +5,31 @@ const Login = () => {
 
   const handleLogin = () => {
     setIsLoading(true);
-    // Simulate a small delay before redirecting to give visual feedback
     setTimeout(() => {
       window.open("http://localhost:5000/auth/google", "_self");
     }, 500);
   };
 
   return (
-    <div className="max-h-screen flex justify-center items-center bg-gradient-to-br from-blue-500 to-indigo-100 p-100">
-      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
+    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-blue-500 to-indigo-100 px-4 sm:px-6 lg:px-8">
+      <div className="bg-white rounded-lg shadow-xl p-6 sm:p-8 w-full max-w-md">
         {/* Logo/Branding Area */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mb-4">
-            <span className="text-white text-3xl font-bold">Tick</span>
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 bg-blue-600 rounded-full flex items-center justify-center mb-4">
+            <span className="text-white text-2xl sm:text-3xl font-bold">
+              Tick
+            </span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">TickTick</h1>
-          <p className="text-gray-500 text-center mt-2">Sign in to access your personal dashboard</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
+            TickTick
+          </h1>
+          <p className="text-gray-500 text-center mt-2 text-sm sm:text-base">
+            Sign in to access your personal dashboard
+          </p>
         </div>
 
         {/* Main Content */}
         <div className="space-y-6">
-        
           <button
             onClick={handleLogin}
             disabled={isLoading}
@@ -44,12 +48,16 @@ const Login = () => {
             )}
           </button>
 
-          <div className="text-center mt-4">
+          <div className="text-center mt-2">
             <p className="text-sm text-gray-500">
-              By signing in, you agree to our 
-              <a href="/terms" className="text-blue-600 hover:underline ml-1">Terms of Service</a>
+              By signing in, you agree to our
+              <a href="/terms" className="text-blue-600 hover:underline ml-1">
+                Terms of Service
+              </a>
               <span className="mx-1">and</span>
-              <a href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</a>
+              <a href="/privacy" className="text-blue-600 hover:underline">
+                Privacy Policy
+              </a>
             </p>
           </div>
         </div>
@@ -57,7 +65,10 @@ const Login = () => {
         {/* Alternative Options */}
         <div className="mt-8 pt-6 border-t border-gray-200">
           <p className="text-center text-sm text-gray-600">
-            Need help? <a href="/help" className="text-blue-600 hover:underline">Contact Support</a>
+            Need help?{" "}
+            <a href="/help" className="text-blue-600 hover:underline">
+              Contact Support
+            </a>
           </p>
         </div>
       </div>

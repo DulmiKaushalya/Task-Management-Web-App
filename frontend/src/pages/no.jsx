@@ -56,7 +56,9 @@ const TaskList = () => {
         (task) =>
           task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           (task.description &&
-            task.description.toLowerCase().includes(searchQuery.toLowerCase()))
+            task.description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (task.assignedTo &&
+            task.assignedTo.toLowerCase().includes(searchQuery.toLowerCase()))
       );
     }
 
@@ -73,7 +75,7 @@ const TaskList = () => {
             ? new Date(a.deadline) - new Date(b.deadline)
             : new Date(b.deadline) - new Date(a.deadline);
         } else {
-          // For title sorting
+          // For title and assignedTo sorting
           if (a[sortConfig.key] < b[sortConfig.key]) {
             return sortConfig.direction === "asc" ? -1 : 1;
           }
@@ -109,11 +111,12 @@ const TaskList = () => {
     doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 28);
 
     autoTable(doc, {
-      head: [["#", "Title", "Status", "Deadline"]],
+      head: [["#", "Title", "Status", "Assigned To", "Deadline"]],
       body: filteredTasks.map((task, index) => [
         index + 1,
         task.title,
         task.status,
+        task.assignedTo || "—",
         new Date(task.deadline).toLocaleDateString(),
       ]),
       startY: 35,
@@ -254,6 +257,18 @@ const TaskList = () => {
                   <th className="p-3 text-left">Status</th>
                   <th
                     className="p-3 text-left cursor-pointer"
+                    onClick={() => handleSort("assignedTo")}
+                  >
+                    <div className="flex items-center">
+                      Assigned To
+                      <FaSort className="ml-1 text-gray-400" />
+                      <span className="text-xs ml-1">
+                        {getSortIndicator("assignedTo")}
+                      </span>
+                    </div>
+                  </th>
+                  <th
+                    className="p-3 text-left cursor-pointer"
                     onClick={() => handleSort("deadline")}
                   >
                     <div className="flex items-center">
@@ -270,7 +285,7 @@ const TaskList = () => {
               <tbody>
                 {filteredTasks.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="text-center p-6 text-gray-500">
+                    <td colSpan="6" className="text-center p-6 text-gray-500">
                       {tasks.length === 0
                         ? "No tasks available"
                         : "No tasks match your filters"}
@@ -297,6 +312,9 @@ const TaskList = () => {
                         >
                           {task.status}
                         </span>
+                      </td>
+                      <td className="p-3">
+                        {task.assignedTo || "—"}
                       </td>
                       <td className="p-3">
                         {new Date(task.deadline).toLocaleDateString()}

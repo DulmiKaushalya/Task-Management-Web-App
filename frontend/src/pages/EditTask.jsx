@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import TaskForm from '../components/TaskForm';
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import TaskForm from "../components/TaskForm";
 
 const EditTask = () => {
   const { id } = useParams();
@@ -9,12 +9,13 @@ const EditTask = () => {
   const [task, setTask] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/tasks', { withCredentials: true })
-      .then(res => {
-        const found = res.data.find(t => t._id === id);
+    axios
+      .get("http://localhost:5000/tasks", { withCredentials: true })
+      .then((res) => {
+        const found = res.data.find((t) => t._id === id);
         if (!found) {
-          alert('Task not found');
-          navigate('/tasks');
+          alert("Task not found");
+          navigate("/tasks");
         } else {
           setTask(found);
         }
@@ -23,10 +24,12 @@ const EditTask = () => {
 
   const handleUpdateTask = async (taskData) => {
     try {
-      await axios.put(`http://localhost:5000/tasks/${id}`, taskData, { withCredentials: true });
-      navigate('/tasks');
+      await axios.put(`http://localhost:5000/tasks/${id}`, taskData, {
+        withCredentials: true,
+      });
+      navigate("/tasks");
     } catch (error) {
-      console.error('Error updating task:', error);
+      console.error("Error updating task:", error);
     }
   };
 
