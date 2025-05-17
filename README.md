@@ -28,7 +28,7 @@ A comprehensive task management system designed for administrators to efficientl
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/Task-Management-Web-App.git
+   git clone https://github.com/DulmiKaushalya/Task-Management-Web-App.git
    ```
 
 2. **Set up environment variables**
